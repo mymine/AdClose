@@ -18,6 +18,8 @@ import com.close.hook.ads.data.model.Url;
 import com.close.hook.ads.hook.util.DexKitUtil;
 import com.close.hook.ads.hook.util.StringFinderKit;
 import com.close.hook.ads.provider.UrlContentProvider;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.luckypray.dexkit.result.MethodData;
 
@@ -106,7 +108,7 @@ public class RequestHook {
 
     private static String formatUrlWithoutQuery(URL url) {
         try {
-            URL formattedUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getPath());
+            URL formattedUrl = Urls.create(url.getProtocol(), url.getHost(), url.getPort(), url.getPath(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
             return formattedUrl.toExternalForm();
         } catch (MalformedURLException e) {
             XposedBridge.log(LOG_PREFIX + "Malformed URL: " + e.getMessage());
@@ -172,7 +174,7 @@ public class RequestHook {
 
                     Object request = XposedHelpers.callMethod(httpEngine, "getRequest");
                     Object httpUrl = XposedHelpers.callMethod(request, "urlString");
-                    URL url = new URL(httpUrl.toString());
+                    URL url = Urls.create(httpUrl.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
                     RequestDetails details = processHttpRequest(request, response, url);
                     if (details != null && shouldBlockHttpsRequest(url, details)) {
@@ -202,7 +204,7 @@ public class RequestHook {
                             Object call = param.thisObject;
                             Object request = XposedHelpers.callMethod(call, "request");
                             Object okhttpUrl = XposedHelpers.callMethod(request, "url");
-                            URL url = new URL(okhttpUrl.toString());
+                            URL url = Urls.create(okhttpUrl.toString(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
                             RequestDetails details = processOkHttpRequest(call, request, url, param.getResult());
                             if (details != null && shouldBlockOkHttpsRequest(url, details)) {
