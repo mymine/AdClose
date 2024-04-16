@@ -167,7 +167,7 @@ public class RequestHook {
     }
 
     private static Object createEmptyResponseForHttp(Object response) throws Exception {
-        if (response.getClass().getName().equals("com.android.okhttp.Response")) {
+        if ("com.android.okhttp.Response".equals(response.getClass().getName())) {
             Class<?> responseClass = response.getClass();
 
             Class<?> builderClass = Class.forName("com.android.okhttp.Response$Builder");

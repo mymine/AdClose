@@ -19,7 +19,7 @@ public class AppAds {
         }
 
         // 对特定应用包名进行额外处理
-        if (packageName.equals("com.weico.international")) {
+        if ("com.weico.international".equals(packageName)) {
             WeiboIE.handle(classLoader);
         }
     }

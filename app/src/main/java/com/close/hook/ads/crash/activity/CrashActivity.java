@@ -309,8 +309,8 @@ public final class CrashActivity {
         do {
             StackTraceElement[] stackTrace = throwable.getStackTrace();
             for (StackTraceElement element : stackTrace) {
-                if ((element.getClassName().equals("android.app.ActivityThread")
-                        && element.getMethodName().equals("handleBindApplication"))
+                if (("android.app.ActivityThread".equals(element.getClassName())
+                        && "handleBindApplication".equals(element.getMethodName()))
                         || element.getClassName().equals(activityClass.getName())) {
                     return true;
                 }
