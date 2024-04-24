@@ -66,6 +66,17 @@ class AidlService : Service() {
         startServiceForeground()
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val packageName = intent?.getStringExtra("packageName")
+        if (packageName.isNullOrBlank()) {
+            Log.d("AidlService", "No active application context or packageName found. Stopping service.")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        startServiceForeground()
+        return START_STICKY
+    }
+
     private fun startServiceForeground() {
         val channelID = "com.close.hook.ads.service"
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

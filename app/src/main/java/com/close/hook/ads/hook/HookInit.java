@@ -4,8 +4,12 @@ import android.util.Log;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+
+import com.close.hook.ads.service.AidlService;
 
 import com.close.hook.ads.hook.util.HookUtil;
 
@@ -88,17 +92,25 @@ public class HookInit implements IXposedHookLoadPackage {
     
                     if (!TAG.equals(packageName)) {
                         XposedBridge.log("Application Name: " + appName);
-                    }
     
-                    if (settingsManager.isRequestHookEnabled()) {
-                        RequestHook.init();
-                    }
+                        if (settingsManager.isRequestHookEnabled()) {
+                            RequestHook.init();
     
-                    AppAds.progress(classLoader, packageName);
-    
-                    if (settingsManager.isHandlePlatformAdEnabled()) {
-                        SDKAdsKit.INSTANCE.blockAds();
-                        SDKAds.hookAds(classLoader);
+                            Intent serviceIntent = new Intent(globalContext, AidlService.class);
+                            serviceIntent.putExtra("packageName", packageName);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                globalContext.startForegroundService(serviceIntent);
+                            } else {
+                                globalContext.startService(serviceIntent);
+                            }
+                        }
+        
+                        AppAds.progress(classLoader, packageName);
+        
+                        if (settingsManager.isHandlePlatformAdEnabled()) {
+                            SDKAdsKit.INSTANCE.blockAds();
+                            SDKAds.hookAds(classLoader);
+                        }
                     }
                 },
                 Context.class
