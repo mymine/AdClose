@@ -5,6 +5,7 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 
 import java.net.NetworkInterface;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -53,7 +54,7 @@ public class HideVPNStatus {
     private static String getRandomString(int length) {
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         StringBuilder sb = new StringBuilder();
-        Random random = new Random();
+        Random random = new SecureRandom();
         for (int i = 0; i < length; i++) {
             sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
         }
