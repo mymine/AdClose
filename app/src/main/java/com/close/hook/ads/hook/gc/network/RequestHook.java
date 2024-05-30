@@ -19,6 +19,7 @@ import com.close.hook.ads.data.model.RequestDetails;
 import com.close.hook.ads.hook.util.HookUtil;
 import com.close.hook.ads.hook.util.DexKitUtil;
 import com.close.hook.ads.hook.util.StringFinderKit;
+import io.github.pixee.security.ObjectInputFilters;
 
 import java.io.IOException;
 
@@ -136,6 +137,7 @@ public class RequestHook {
                         try (FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
                              ObjectInputStream ois = new ObjectInputStream(fis)) {
     
+                            ObjectInputFilters.enableObjectFilterIfUnprotected(ois);
                             BlockedBean blockedBean = (BlockedBean) ois.readObject();
                             if (blockedBean.isBlocked()) {
                                 return new Triple<>(true, blockedBean.getType(), blockedBean.getValue());
