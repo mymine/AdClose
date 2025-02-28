@@ -21,7 +21,6 @@ object SDKAdsKit {
         ContextUtil.addOnApplicationContextInitializedCallback {
             DexKitUtil.initializeDexKitBridge()
 
-            handlePangolinInit()
             handleGdtInit()
             handleAnyThinkSDK()
             blockFirebaseWithString()
@@ -48,22 +47,6 @@ object SDKAdsKit {
 
     private fun isValidMethodData(methodData: MethodData): Boolean {
         return methodData.methodName != "<init>"
-    }
-
-    fun handlePangolinInit() {
-        hookAllMethods(
-            "com.bytedance.sdk.openadsdk.TTAdSdk",
-            "init",
-            "after",
-            { param ->
-                param.result = when ((param.method as Method).returnType) {
-                    Void.TYPE -> null
-                    java.lang.Boolean.TYPE -> false
-                    else -> null
-                }
-            },
-            DexKitUtil.context.classLoader
-        )
     }
 
     fun handleGdtInit() {
